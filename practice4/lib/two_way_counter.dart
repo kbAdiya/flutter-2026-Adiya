@@ -60,10 +60,11 @@ class _TwoWayCounterState extends State<TwoWayCounter> {
                     _saving = false;
                   });
 
-                  ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text('Saved')));
+                  ScaffoldMessenger.of(this.context)
+                      .showSnackBar(const SnackBar(content: Text('Saved')));
                 },
           child: _saving
-              ? const  CircularProgressIndicator(strokeWidth: 1)
+              ? const CircularProgressIndicator(strokeWidth: 1)
               : const Text('Save'),
         ),
       ],

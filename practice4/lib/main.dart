@@ -24,13 +24,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Main screen for Practice 4')),
       body: const Padding(
         padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TapCard(),
-            TwoWayCounter(),
-            StopwatchCard(),
-          ],
-        ),
+        child: Column(children: [TapCard(), TwoWayCounter(), StopwatchCard()]),
       ),
     );
   }
