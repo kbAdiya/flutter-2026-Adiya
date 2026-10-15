@@ -24,7 +24,7 @@ class _EditScreenState extends State<EditScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !_dirty,
-      onPopInvokedWithResult: (didPop, result) async {
+      onPopInvokedWithResult: (didPop, _) async {
         if (didPop) {
           return;
         }
