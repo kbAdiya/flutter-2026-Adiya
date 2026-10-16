@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../data/seed_data.dart';
 import '../models/profile.dart';
 import '../models/workshop.dart';
+import '../routes.dart';
+
 import 'favourites_screen.dart';
 import 'workshops_screen.dart';
 
@@ -42,6 +44,16 @@ class _ShellState extends State<Shell> {
     });
   }
 
+  void _open(Workshop workshop) {
+    Navigator.of(context).pushNamed(
+      Routes.detail,
+      arguments: DetailArguments(
+        workshop: workshop,
+        profileName: _profile.name,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,13 +66,13 @@ class _ShellState extends State<Shell> {
           WorkshopsScreen(
             workshops: _workshops,
             onFavourite: _toggleFavourite,
-            onOpen: (workshop) {},
+            onOpen: _open,
             onCreate: () {},
           ),
           FavouritesScreen(
             workshops: _workshops,
             onFavourite: _toggleFavourite,
-            onOpen: (workshop) {},
+            onOpen: _open,
           ),
           Center(
             child: Text(

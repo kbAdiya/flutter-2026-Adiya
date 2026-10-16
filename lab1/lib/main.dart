@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'routes.dart';
+import 'screens/detail_screen.dart';
 import 'screens/shell.dart';
 
 void main() {
@@ -20,7 +22,37 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
         ),
       ),
-      home: const Shell(),
+      initialRoute: Routes.shell,
+      routes: {
+        Routes.shell: (context) {
+          return const Shell();
+        },
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == Routes.detail &&
+            settings.arguments is DetailArguments) {
+          final args = settings.arguments as DetailArguments;
+
+          return MaterialPageRoute<void>(
+            builder: (context) {
+              return DetailScreen(arguments: args);
+            },
+          );
+        }
+
+        return null;
+      },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute<void>(
+          builder: (context) {
+            return const Scaffold(
+              body: Center(
+                child: Text('Not found'),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
