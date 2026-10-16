@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+
 import 'models/workshop.dart';
 
 abstract final class Routes {
@@ -11,10 +13,14 @@ class DetailArguments {
   const DetailArguments({
     required this.workshop,
     required this.profileName,
+    required this.onUpdate,
+    required this.goToProfile,
   });
 
   final Workshop workshop;
   final String profileName;
+  final ValueChanged<Workshop> onUpdate;
+  final VoidCallback goToProfile;
 }
 
 class FormArguments {

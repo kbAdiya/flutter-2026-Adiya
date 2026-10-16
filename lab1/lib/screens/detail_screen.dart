@@ -50,10 +50,94 @@ class _DetailScreenState extends State<DetailScreen> {
     super.dispose();
   }
 
+  void _update(Workshop workshop) {
+    widget.arguments.onUpdate(workshop);
+
+    setState(() {
+      _workshop = workshop;
+    });
+  }
+
+  Future<void> _joinOrLeave() async {
+    final name = widget.arguments.profileName.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Enter your name in Profile first'),
+          action: SnackBarAction(
+            label: 'Profile',
+            onPressed: () {
+              widget.arguments.goToProfile();
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+      );
+      return;
+    }
+
+    final joined = _workshop.contains(name);
+
+    if (!joined && (_workshop.isFull || _workshop.isPast)) {
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(
+            joined ? 'Leave workshop?' : 'Join workshop?',
+          ),
+          content: Text(_workshop.title),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    List<String> names;
+
+    if (joined) {
+      names = _workshop.participants.where((person) {
+        return person != name;
+      }).toList();
+    } else {
+      names = [
+        ..._workshop.participants,
+        name,
+      ];
+    }
+
+    _update(
+      _workshop.copyWith(
+        participants: names,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final name = widget.arguments.profileName.trim();
+    final joined = name.isNotEmpty && _workshop.contains(name);
 
     final (taken: taken, free: free) = _workshop.places;
 
@@ -159,6 +243,19 @@ class _DetailScreenState extends State<DetailScreen> {
                     ],
                   ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed:
+                  joined || (!_workshop.isFull && !_workshop.isPast)
+                      ? _joinOrLeave
+                      : null,
+                  child: Text(joined ? 'Leave' : 'Join'),
+                ),
               ),
             ),
           ],

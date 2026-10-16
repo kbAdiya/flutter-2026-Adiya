@@ -30,26 +30,46 @@ class _ShellState extends State<Shell> {
     _workshops = createSeedWorkshops();
   }
 
-  void _toggleFavourite(Workshop workshop) {
-    final index = _workshops.indexOf(workshop);
+  void _goToProfile() {
+    setState(() {
+      _selectedTab = 2;
+    });
+  }
+
+  void _replace(Workshop oldItem, Workshop newItem) {
+    final index = _workshops.indexOf(oldItem);
 
     if (index == -1) {
       return;
     }
 
     setState(() {
-      _workshops[index] = workshop.copyWith(
-        isFavourite: !workshop.isFavourite,
-      );
+      _workshops[index] = newItem;
     });
   }
 
+  void _toggleFavourite(Workshop workshop) {
+    _replace(
+      workshop,
+      workshop.copyWith(
+        isFavourite: !workshop.isFavourite,
+      ),
+    );
+  }
+
   void _open(Workshop workshop) {
+    var current = workshop;
+
     Navigator.of(context).pushNamed(
       Routes.detail,
       arguments: DetailArguments(
         workshop: workshop,
         profileName: _profile.name,
+        goToProfile: _goToProfile,
+        onUpdate: (updated) {
+          _replace(current, updated);
+          current = updated;
+        },
       ),
     );
   }
