@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'data/seed_data.dart';
 import 'models/workshop.dart';
-import 'widgets/workshop_card.dart';
+import 'screens/workshops_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,30 +45,31 @@ class _HomeScreenState extends State<HomeScreen> {
     _workshops = createSeedWorkshops();
   }
 
+  void _toggleFavourite(Workshop workshop) {
+    final index = _workshops.indexOf(workshop);
+
+    if (index == -1) {
+      return;
+    }
+
+    setState(() {
+      _workshops[index] = workshop.copyWith(
+        isFavourite: !workshop.isFavourite,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dance Workshops'),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _workshops.length,
-        itemBuilder: (context, index) {
-          final workshop = _workshops[index];
-
-          return WorkshopCard(
-            workshop: workshop,
-            onFavourite: () {
-              setState(() {
-                _workshops[index] = workshop.copyWith(
-                  isFavourite: !workshop.isFavourite,
-                );
-              });
-            },
-            onTap: () {},
-          );
-        },
+      body: WorkshopsScreen(
+        workshops: _workshops,
+        onFavourite: _toggleFavourite,
+        onOpen: (workshop) {},
+        onCreate: () {},
       ),
     );
   }
