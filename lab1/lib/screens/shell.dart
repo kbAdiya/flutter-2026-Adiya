@@ -57,6 +57,12 @@ class _ShellState extends State<Shell> {
     );
   }
 
+  void _delete(Workshop workshop) {
+    setState(() {
+      _workshops.remove(workshop);
+    });
+  }
+
   void _open(Workshop workshop) {
     var current = workshop;
 
@@ -70,6 +76,7 @@ class _ShellState extends State<Shell> {
           _replace(current, updated);
           current = updated;
         },
+        onDelete: _delete,
       ),
     );
   }

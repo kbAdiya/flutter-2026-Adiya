@@ -73,6 +73,39 @@ class _DetailScreenState extends State<DetailScreen> {
     _update(result);
   }
 
+  Future<void> _delete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete workshop?'),
+          content: Text(_workshop.title),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    widget.arguments.onDelete(_workshop);
+    Navigator.of(context).pop();
+  }
+
   Future<void> _joinOrLeave() async {
     final name = widget.arguments.profileName.trim();
 
@@ -167,12 +200,20 @@ class _DetailScreenState extends State<DetailScreen> {
                 if (value == 'edit') {
                   _edit();
                 }
+
+                if (value == 'delete') {
+                  _delete();
+                }
               },
               itemBuilder: (context) {
                 return const [
                   PopupMenuItem(
                     value: 'edit',
                     child: Text('Edit'),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Delete'),
                   ),
                 ];
               },

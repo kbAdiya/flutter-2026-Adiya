@@ -14,12 +14,14 @@ class DetailArguments {
     required this.workshop,
     required this.profileName,
     required this.onUpdate,
+    required this.onDelete,
     required this.goToProfile,
   });
 
   final Workshop workshop;
   final String profileName;
   final ValueChanged<Workshop> onUpdate;
+  final ValueChanged<Workshop> onDelete;
   final VoidCallback goToProfile;
 }
 
