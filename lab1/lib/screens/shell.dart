@@ -7,10 +7,18 @@ import '../models/workshop.dart';
 import '../routes.dart';
 
 import 'favourites_screen.dart';
+import 'profile_screen.dart';
 import 'workshops_screen.dart';
 
 class Shell extends StatefulWidget {
-  const Shell({super.key});
+  const Shell({
+    super.key,
+    required this.themeMode,
+    required this.onThemeChanged,
+  });
+
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeChanged;
 
   @override
   State<Shell> createState() {
@@ -116,10 +124,16 @@ class _ShellState extends State<Shell> {
             onFavourite: _toggleFavourite,
             onOpen: _open,
           ),
-          Center(
-            child: Text(
-              _profile.name.isEmpty ? 'Profile' : _profile.name,
-            ),
+          ProfileScreen(
+            profile: _profile,
+            workshops: _workshops,
+            onProfileChanged: (profile) {
+              setState(() {
+                _profile = profile;
+              });
+            },
+            themeMode: widget.themeMode,
+            onThemeChanged: widget.onThemeChanged,
           ),
         ],
       ),

@@ -11,8 +11,17 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() {
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +33,24 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
         ),
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: _themeMode,
       initialRoute: Routes.shell,
       routes: {
         Routes.shell: (context) {
-          return const Shell();
+          return Shell(
+            themeMode: _themeMode,
+            onThemeChanged: (mode) {
+              setState(() {
+                _themeMode = mode;
+              });
+            },
+          );
         },
       },
       onGenerateRoute: (settings) {
