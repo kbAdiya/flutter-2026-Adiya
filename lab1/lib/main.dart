@@ -1,8 +1,10 @@
 
 import 'package:flutter/material.dart';
 
+import 'models/workshop.dart';
 import 'routes.dart';
 import 'screens/detail_screen.dart';
+import 'screens/form_screen.dart';
 import 'screens/shell.dart';
 
 void main() {
@@ -36,6 +38,17 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute<void>(
             builder: (context) {
               return DetailScreen(arguments: args);
+            },
+          );
+        }
+
+        if (settings.name == Routes.form &&
+            settings.arguments is FormArguments) {
+          final args = settings.arguments as FormArguments;
+
+          return MaterialPageRoute<Workshop>(
+            builder: (context) {
+              return WorkshopFormScreen(arguments: args);
             },
           );
         }

@@ -58,6 +58,21 @@ class _DetailScreenState extends State<DetailScreen> {
     });
   }
 
+  Future<void> _edit() async {
+    final result = await Navigator.of(context).pushNamed<Workshop>(
+      Routes.form,
+      arguments: FormArguments(
+        workshop: _workshop,
+      ),
+    );
+
+    if (result == null || !mounted) {
+      return;
+    }
+
+    _update(result);
+  }
+
   Future<void> _joinOrLeave() async {
     final name = widget.arguments.profileName.trim();
 
@@ -146,6 +161,23 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(_workshop.title),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'edit') {
+                  _edit();
+                }
+              },
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Text('Edit'),
+                  ),
+                ];
+              },
+            ),
+          ],
         ),
         body: Column(
           children: [

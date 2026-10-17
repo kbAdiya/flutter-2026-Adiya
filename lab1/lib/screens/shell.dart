@@ -74,6 +74,21 @@ class _ShellState extends State<Shell> {
     );
   }
 
+  Future<void> _create() async {
+    final result = await Navigator.of(context).pushNamed<Workshop>(
+      Routes.form,
+      arguments: const FormArguments(),
+    );
+
+    if (result == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _workshops.add(result);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +102,7 @@ class _ShellState extends State<Shell> {
             workshops: _workshops,
             onFavourite: _toggleFavourite,
             onOpen: _open,
-            onCreate: () {},
+            onCreate: _create,
           ),
           FavouritesScreen(
             workshops: _workshops,
@@ -96,9 +111,7 @@ class _ShellState extends State<Shell> {
           ),
           Center(
             child: Text(
-              _profile.name.isEmpty
-                  ? 'Profile'
-                  : _profile.name,
+              _profile.name.isEmpty ? 'Profile' : _profile.name,
             ),
           ),
         ],
