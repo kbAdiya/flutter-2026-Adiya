@@ -122,6 +122,15 @@ class _DetailScreenState extends State<DetailScreen> {
       return;
     }
 
+    if (joined) {
+      final names = _workshop.participants.where((person) {
+        return person != name;
+      }).toList();
+
+      _update(_workshop.copyWith(participants: names));
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -149,16 +158,8 @@ class _DetailScreenState extends State<DetailScreen> {
     if (confirmed != true || !mounted) {
       return;
     }
-
-    List<String> names;
-
-    if (joined) {
-      names = _workshop.participants.where((person) {
-        return person != name;
-      }).toList();
-    } else {
-      names = [..._workshop.participants, name];
-    }
+    
+    final names = [..._workshop.participants, name];
 
     _update(_workshop.copyWith(participants: names));
   }

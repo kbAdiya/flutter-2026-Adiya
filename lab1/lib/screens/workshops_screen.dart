@@ -42,8 +42,6 @@ class _WorkshopsScreenState extends State<WorkshopsScreen> {
 
     setState(() {
       _search = '';
-      _category = null;
-      _showPast = false;
     });
   }
 
