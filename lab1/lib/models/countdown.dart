@@ -34,10 +34,8 @@ Countdown countdownFor(DateTime start, DateTime now) {
 
 String countdownText(Countdown countdown) {
   return switch (countdown) {
-    Upcoming(:final remaining) =>
-    'Starts in ${remaining.inMinutes} min',
-    Started(:final elapsed) =>
-    'Started ${elapsed.inMinutes} min ago',
+    Upcoming(:final remaining) => 'Starts in ${remaining.inMinutes} min',
+    Started(:final elapsed) => 'Started ${elapsed.inMinutes} min ago',
     Ended() => 'Ended',
   };
 }

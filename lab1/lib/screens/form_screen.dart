@@ -1,14 +1,10 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/workshop.dart';
 import '../routes.dart';
 
 class WorkshopFormScreen extends StatefulWidget {
-  const WorkshopFormScreen({
-    super.key,
-    required this.arguments,
-  });
+  const WorkshopFormScreen({super.key, required this.arguments});
 
   final FormArguments arguments;
 
@@ -49,12 +45,8 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
 
     _title = TextEditingController(text: _original.title);
     _place = TextEditingController(text: _original.place);
-    _limit = TextEditingController(
-      text: _original.limit.toString(),
-    );
-    _description = TextEditingController(
-      text: _original.description ?? '',
-    );
+    _limit = TextEditingController(text: _original.limit.toString());
+    _description = TextEditingController(text: _original.description ?? '');
 
     _date = TextEditingController();
     _time = TextEditingController();
@@ -65,10 +57,10 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
       _selectedTime = TimeOfDay.fromDateTime(_original.when);
 
       _date.text =
-      '${_original.when.day}.${_original.when.month}.${_original.when.year}';
+          '${_original.when.day}.${_original.when.month}.${_original.when.year}';
 
       _time.text =
-      '${_original.when.hour.toString().padLeft(2, '0')}:${_original.when.minute.toString().padLeft(2, '0')}';
+          '${_original.when.hour.toString().padLeft(2, '0')}:${_original.when.minute.toString().padLeft(2, '0')}';
     } else {
       _category = null;
     }
@@ -87,10 +79,10 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
 
     if (editing) {
       initialDate =
-      '${_original.when.day}.${_original.when.month}.${_original.when.year}';
+          '${_original.when.day}.${_original.when.month}.${_original.when.year}';
 
       initialTime =
-      '${_original.when.hour.toString().padLeft(2, '0')}:${_original.when.minute.toString().padLeft(2, '0')}';
+          '${_original.when.hour.toString().padLeft(2, '0')}:${_original.when.minute.toString().padLeft(2, '0')}';
     }
 
     DanceCategory? initialCategory;
@@ -127,8 +119,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
   Future<void> _pickDate() async {
     final date = await showDatePicker(
       context: context,
-      initialDate:
-      _selectedDate ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate: _selectedDate ?? DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
@@ -146,8 +137,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
   Future<void> _pickTime() async {
     final time = await showTimePicker(
       context: context,
-      initialTime:
-      _selectedTime ?? const TimeOfDay(hour: 15, minute: 0),
+      initialTime: _selectedTime ?? const TimeOfDay(hour: 15, minute: 0),
     );
 
     if (time == null || !mounted) {
@@ -157,7 +147,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
     setState(() {
       _selectedTime = time;
       _time.text =
-      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
     });
   }
 
@@ -245,7 +235,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
     final editing = widget.arguments.workshop != null;
 
     return PopScope(
-      canPop: !_dirty,
+      canPop: !_dirty || _saving,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           return;
@@ -254,11 +244,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
         await _confirmExit();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            editing ? 'Edit workshop' : 'New workshop',
-          ),
-        ),
+        appBar: AppBar(title: Text(editing ? 'Edit workshop' : 'New workshop')),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Form(
@@ -384,9 +370,7 @@ class _WorkshopFormScreenState extends State<WorkshopFormScreen> {
                   validator: (value) {
                     final number = int.tryParse(value ?? '');
 
-                    if (number == null ||
-                        number < 1 ||
-                        number > 500) {
+                    if (number == null || number < 1 || number > 500) {
                       return 'Enter a number from 1 to 500';
                     }
 

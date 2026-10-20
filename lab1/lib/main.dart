@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'models/workshop.dart';
@@ -29,9 +28,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Dance Workshops',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -81,11 +78,7 @@ class _MyAppState extends State<MyApp> {
       onUnknownRoute: (settings) {
         return MaterialPageRoute<void>(
           builder: (context) {
-            return const Scaffold(
-              body: Center(
-                child: Text('Not found'),
-              ),
-            );
+            return const Scaffold(body: Center(child: Text('Not found')));
           },
         );
       },

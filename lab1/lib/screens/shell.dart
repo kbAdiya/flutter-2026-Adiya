@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../data/seed_data.dart';
@@ -57,12 +56,7 @@ class _ShellState extends State<Shell> {
   }
 
   void _toggleFavourite(Workshop workshop) {
-    _replace(
-      workshop,
-      workshop.copyWith(
-        isFavourite: !workshop.isFavourite,
-      ),
-    );
+    _replace(workshop, workshop.copyWith(isFavourite: !workshop.isFavourite));
   }
 
   void _delete(Workshop workshop) {
@@ -90,10 +84,8 @@ class _ShellState extends State<Shell> {
   }
 
   Future<void> _create() async {
-    final result = await Navigator.of(context).pushNamed<Workshop>(
-      Routes.form,
-      arguments: const FormArguments(),
-    );
+    final result = await Navigator.of(context)
+        .pushNamed<Workshop>(Routes.form, arguments: const FormArguments());
 
     if (result == null || !mounted) {
       return;
@@ -104,11 +96,90 @@ class _ShellState extends State<Shell> {
     });
   }
 
+  Future<void> _about() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('About'),
+          content: const Text('Dance Workshops - Flutter Lab 1. '),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _reset() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Reset data?'),
+          content: const Text(
+            'Restore all original workshops and clear your profile?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text('Reset'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _workshops = createSeedWorkshops();
+      _profile = const Profile.empty();
+      _selectedTab = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dance Workshops'),
+      appBar: AppBar(title: const Text('Dance Workshops')),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(child: Center(child: Text('Dance Workshops'))),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _about();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.restore),
+              title: const Text('Reset data'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _reset();
+              },
+            ),
+          ],
+        ),
       ),
       body: IndexedStack(
         index: _selectedTab,
@@ -138,6 +209,7 @@ class _ShellState extends State<Shell> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
+        height: 60,
         selectedIndex: _selectedTab,
         onDestinationSelected: (index) {
           setState(() {
@@ -145,18 +217,12 @@ class _ShellState extends State<Shell> {
           });
         },
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.list),
-            label: 'Workshops',
-          ),
+          NavigationDestination(icon: Icon(Icons.list), label: 'Workshops'),
           NavigationDestination(
             icon: Icon(Icons.favorite),
             label: 'Favourites',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

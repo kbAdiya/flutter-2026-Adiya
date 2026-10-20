@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'models/workshop.dart';
@@ -26,9 +25,7 @@ class DetailArguments {
 }
 
 class FormArguments {
-  const FormArguments({
-    this.workshop,
-  });
+  const FormArguments({this.workshop});
 
   final Workshop? workshop;
 }

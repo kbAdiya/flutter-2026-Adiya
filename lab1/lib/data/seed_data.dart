@@ -4,12 +4,7 @@ List<Workshop> createSeedWorkshops() {
   final now = DateTime.now();
 
   DateTime inDays(int days) {
-    return DateTime(
-      now.year,
-      now.month,
-      now.day + days,
-      15,
-    );
+    return DateTime(now.year, now.month, now.day + days, 15);
   }
 
   return [
@@ -28,13 +23,7 @@ List<Workshop> createSeedWorkshops() {
       category: DanceCategory.kpop,
       when: inDays(8),
       limit: 5,
-      participants: const [
-        'Aida',
-        'Dana',
-        'Madina',
-        'Aruzhan',
-        'Kamila',
-      ],
+      participants: const ['Aida', 'Dana', 'Madina', 'Aruzhan', 'Kamila'],
       isOnline: false,
       place: 'Studio B',
       description: 'Dance to BLACKPINK songs.',

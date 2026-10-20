@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/workshop.dart';
@@ -51,12 +50,11 @@ class _WorkshopsScreenState extends State<WorkshopsScreen> {
   @override
   Widget build(BuildContext context) {
     final filtered = widget.workshops.where((workshop) {
-      final searchMatch = workshop.title
-          .toLowerCase()
-          .contains(_search.toLowerCase());
+      final searchMatch = workshop.title.toLowerCase().contains(
+        _search.toLowerCase(),
+      );
 
-      final categoryMatch =
-          _category == null || workshop.category == _category;
+      final categoryMatch = _category == null || workshop.category == _category;
 
       final dateMatch = _showPast || !workshop.isPast;
 
@@ -75,23 +73,40 @@ class _WorkshopsScreenState extends State<WorkshopsScreen> {
       return a.when.compareTo(b.when);
     });
 
+    Widget card(Workshop workshop) {
+      return WorkshopCard(
+        workshop: workshop,
+        onFavourite: () {
+          widget.onFavourite(workshop);
+        },
+        onTap: () {
+          widget.onOpen(workshop);
+        },
+      );
+    }
+
     return Scaffold(
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: 'Search workshops',
                 prefixIcon: const Icon(Icons.search),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
                 border: const OutlineInputBorder(),
                 suffixIcon: _search.isEmpty
                     ? null
                     : IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: _clear,
-                ),
+                        icon: const Icon(Icons.clear),
+                        onPressed: _clear,
+                      ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -127,52 +142,57 @@ class _WorkshopsScreenState extends State<WorkshopsScreen> {
                   ),
                   const SizedBox(width: 8),
                 ],
+                FilterChip(
+                  label: const Text('Show past workshops'),
+                  selected: _showPast,
+                  onSelected: (value) {
+                    setState(() {
+                      _showPast = value;
+                    });
+                  },
+                ),
               ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: FilterChip(
-                label: const Text('Show past workshops'),
-                selected: _showPast,
-                onSelected: (value) {
-                  setState(() {
-                    _showPast = value;
-                  });
-                },
-              ),
             ),
           ),
           Expanded(
             child: filtered.isEmpty
                 ? EmptyState(
-              message: 'No workshops found',
-              icon: Icons.search_off,
-              buttonText: 'Clear filters',
-              onPressed: _clear,
-            )
-                : ListView.separated(
-              padding: const EdgeInsets.all(12),
-              itemCount: filtered.length,
-              separatorBuilder: (context, index) {
-                return const SizedBox(height: 8);
-              },
-              itemBuilder: (context, index) {
-                final workshop = filtered[index];
+                    message: 'No workshops found',
+                    icon: Icons.search_off,
+                    buttonText: 'Clear filters',
+                    onPressed: _clear,
+                  )
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 600) {
+                        return ListView.separated(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: filtered.length,
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(height: 8);
+                          },
+                          itemBuilder: (context, index) {
+                            return card(filtered[index]);
+                          },
+                        );
+                      }
 
-                return WorkshopCard(
-                  workshop: workshop,
-                  onFavourite: () {
-                    widget.onFavourite(workshop);
-                  },
-                  onTap: () {
-                    widget.onOpen(workshop);
-                  },
-                );
-              },
-            ),
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(12),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 360,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              mainAxisExtent: 132,
+                            ),
+                        itemCount: filtered.length,
+                        itemBuilder: (context, index) {
+                          return card(filtered[index]);
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),

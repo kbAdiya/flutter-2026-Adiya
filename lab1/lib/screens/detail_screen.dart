@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,10 +9,7 @@ import '../utils/format.dart';
 import '../widgets/empty_state.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({
-    super.key,
-    required this.arguments,
-  });
+  const DetailScreen({super.key, required this.arguments});
 
   final DetailArguments arguments;
 
@@ -34,14 +30,11 @@ class _DetailScreenState extends State<DetailScreen> {
 
     _workshop = widget.arguments.workshop;
 
-    _timer = Timer.periodic(
-      const Duration(minutes: 1),
-          (timer) {
-        setState(() {
-          _now = DateTime.now();
-        });
-      },
-    );
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      setState(() {
+        _now = DateTime.now();
+      });
+    });
   }
 
   @override
@@ -61,9 +54,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Future<void> _edit() async {
     final result = await Navigator.of(context).pushNamed<Workshop>(
       Routes.form,
-      arguments: FormArguments(
-        workshop: _workshop,
-      ),
+      arguments: FormArguments(workshop: _workshop),
     );
 
     if (result == null || !mounted) {
@@ -135,9 +126,7 @@ class _DetailScreenState extends State<DetailScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            joined ? 'Leave workshop?' : 'Join workshop?',
-          ),
+          title: Text(joined ? 'Leave workshop?' : 'Join workshop?'),
           content: Text(_workshop.title),
           actions: [
             TextButton(
@@ -168,17 +157,10 @@ class _DetailScreenState extends State<DetailScreen> {
         return person != name;
       }).toList();
     } else {
-      names = [
-        ..._workshop.participants,
-        name,
-      ];
+      names = [..._workshop.participants, name];
     }
 
-    _update(
-      _workshop.copyWith(
-        participants: names,
-      ),
-    );
+    _update(_workshop.copyWith(participants: names));
   }
 
   @override
@@ -207,14 +189,8 @@ class _DetailScreenState extends State<DetailScreen> {
               },
               itemBuilder: (context) {
                 return const [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Edit'),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Delete'),
-                  ),
+                  PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  PopupMenuItem(value: 'delete', child: Text('Delete')),
                 ];
               },
             ),
@@ -245,9 +221,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   bottom: 12,
                   child: Chip(
                     label: Text(
-                      countdownText(
-                        countdownFor(_workshop.when, _now),
-                      ),
+                      countdownText(countdownFor(_workshop.when, _now)),
                     ),
                   ),
                 ),
@@ -273,9 +247,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         leading: const Icon(Icons.place),
                         title: Text(_workshop.place),
                         subtitle: Text(
-                          _workshop.isOnline
-                              ? 'Online link'
-                              : 'In person',
+                          _workshop.isOnline ? 'Online link' : 'In person',
                         ),
                       ),
                       ListTile(
@@ -285,36 +257,34 @@ class _DetailScreenState extends State<DetailScreen> {
                       if (_workshop.description != null)
                         Padding(
                           padding: const EdgeInsets.all(12),
-                          child: Text(
-                            _workshop.description ?? '',
-                          ),
+                          child: Text(_workshop.description ?? ''),
                         ),
                     ],
                   ),
                   _workshop.participants.isEmpty
                       ? const EmptyState(
-                    message: 'Nobody has joined yet',
-                    icon: Icons.people_outline,
-                  )
+                          message: 'Nobody has joined yet',
+                          icon: Icons.people_outline,
+                        )
                       : ListView(
-                    children: [
-                      for (final person in _workshop.participants)
-                        ListTile(
-                          title: Text(
-                            person,
-                            style: person == name
-                                ? TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: scheme.primary,
-                            )
-                                : null,
-                          ),
-                          trailing: person == name
-                              ? const Text('You')
-                              : null,
+                          children: [
+                            for (final person in _workshop.participants)
+                              ListTile(
+                                title: Text(
+                                  person,
+                                  style: person == name
+                                      ? TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: scheme.primary,
+                                        )
+                                      : null,
+                                ),
+                                trailing: person == name
+                                    ? const Text('You')
+                                    : null,
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -323,8 +293,7 @@ class _DetailScreenState extends State<DetailScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed:
-                  joined || (!_workshop.isFull && !_workshop.isPast)
+                  onPressed: joined || (!_workshop.isFull && !_workshop.isPast)
                       ? _joinOrLeave
                       : null,
                   child: Text(joined ? 'Leave' : 'Join'),

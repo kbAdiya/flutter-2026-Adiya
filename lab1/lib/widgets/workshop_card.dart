@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/workshop.dart';
@@ -50,9 +49,7 @@ class WorkshopCard extends StatelessWidget {
                     Positioned(
                       right: -9,
                       bottom: -10,
-                      child: Badge(
-                        label: Text(badge),
-                      ),
+                      child: Badge(label: Text(badge)),
                     ),
                 ],
               ),
@@ -83,9 +80,7 @@ class WorkshopCard extends StatelessWidget {
               IconButton(
                 onPressed: onFavourite,
                 icon: Icon(
-                  workshop.isFavourite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
+                  workshop.isFavourite ? Icons.favorite : Icons.favorite_border,
                 ),
               ),
             ],

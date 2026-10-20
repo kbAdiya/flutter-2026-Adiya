@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/profile.dart';
@@ -34,13 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
 
-    _nameController = TextEditingController(
-      text: widget.profile.name,
-    );
+    _nameController = TextEditingController(text: widget.profile.name);
 
-    _groupController = TextEditingController(
-      text: widget.profile.group,
-    );
+    _groupController = TextEditingController(text: widget.profile.group);
   }
 
   @override
@@ -57,28 +52,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _saveName(String value) {
-    widget.onProfileChanged(
-      widget.profile.copyWith(
-        name: value.trim(),
-      ),
-    );
+    widget.onProfileChanged(widget.profile.copyWith(name: value.trim()));
   }
 
   void _saveGroup(String value) {
     if (!RegExp(r'^[A-Za-z]{2,5}-\d{4}$').hasMatch(value.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Group format: IT-2302'),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Group format: IT-2302')));
       return;
     }
 
-    widget.onProfileChanged(
-      widget.profile.copyWith(
-        group: value.trim(),
-      ),
-    );
+    widget.onProfileChanged(widget.profile.copyWith(group: value.trim()));
   }
 
   @override
@@ -103,10 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          'Your profile',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Text('Your profile', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
         TextField(
           controller: _nameController,
@@ -130,10 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 16),
         Text('You are on $joined lists'),
         const SizedBox(height: 24),
-        Text(
-          'Theme',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text('Theme', style: Theme.of(context).textTheme.titleMedium),
         Wrap(
           spacing: 8,
           children: [

@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 enum DanceCategory {
   kpop('K-pop', Icons.music_note),
   hiphop('Hip-hop', Icons.headphones),
@@ -35,6 +33,7 @@ class Workshop {
     required this.place,
     this.description,
     this.isFavourite = false,
+    // ignore: prefer_initializing_formals
   }) : _participants = participants;
 
   final String title;
@@ -68,26 +67,25 @@ class Workshop {
   }
 
   bool contains(String name) {
-    return _participants.contains(name);
+    return _participants.any((person) {
+      return person == name;
+    });
   }
 
   ({int taken, int free}) get places {
-    return (
-    taken: count,
-    free: freePlaces,
-    );
+    return (taken: count, free: freePlaces);
   }
 
   Workshop.empty()
-      : title = '',
-        category = DanceCategory.kpop,
-        when = DateTime.now().add(const Duration(days: 1)),
-        limit = 20,
-        _participants = const [],
-        isOnline = false,
-        place = '',
-        description = null,
-        isFavourite = false;
+    : title = '',
+      category = DanceCategory.kpop,
+      when = DateTime.now().add(const Duration(days: 1)),
+      limit = 20,
+      _participants = const [],
+      isOnline = false,
+      place = '',
+      description = null,
+      isFavourite = false;
 
   Workshop copyWith({
     String? title,
@@ -114,9 +112,7 @@ class Workshop {
       category: category ?? this.category,
       when: when ?? this.when,
       limit: limit ?? this.limit,
-      participants: List<String>.unmodifiable(
-        participants ?? _participants,
-      ),
+      participants: List<String>.unmodifiable(participants ?? _participants),
       isOnline: isOnline ?? this.isOnline,
       place: place ?? this.place,
       description: newDescription,
