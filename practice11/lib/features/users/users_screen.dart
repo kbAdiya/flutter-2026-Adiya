@@ -6,6 +6,8 @@ import 'user.dart';
 import 'users_model.dart';
 import 'user_detail_screen.dart';
 import 'new_user_screen.dart';
+import '../settings/settings_model.dart';
+import '../settings/settings_screen.dart';
 
 class UsersScreen extends StatelessWidget {
   const UsersScreen({super.key});
@@ -13,13 +15,22 @@ class UsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UsersModel model = context.watch<UsersModel>();
+    final SettingsModel settings = context.watch<SettingsModel>();
 
     if (model.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final List<User> filteredUsers = [];
+
+    for (final user in model.items) {
+      if (settings.city == null || user.address.city == settings.city) {
+        filteredUsers.add(user);
+      }
+    }
+
     final Widget content = switch (model.error) {
-      null => UserList(users: model.items, onRefresh: model.load),
+      null => UserList(users: filteredUsers, onRefresh: model.load),
 
       NoConnectionException() => ErrorView(
         message: 'No internet connection',
@@ -52,6 +63,20 @@ class UsersScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const SettingsScreen();
+                  },
+                ),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh users',
             onPressed: () {
@@ -75,7 +100,26 @@ class UsersScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: content,
+
+      body: Column(
+        children: [
+          if (model.fromCache && model.error == null)
+            MaterialBanner(
+              content: const Text('Saved data · no connection'),
+              leading: const Icon(Icons.wifi_off, color: Colors.orange),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await model.load();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+
+          Expanded(child: content),
+        ],
+      ),
     );
   }
 }

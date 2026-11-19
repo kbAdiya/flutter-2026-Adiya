@@ -1,11 +1,44 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../core/storage/secure_store.dart';
+
 import 'user.dart';
 
 class UserDetailScreen extends StatelessWidget {
   final User user;
 
   const UserDetailScreen({super.key, required this.user});
+
+  Future<void> _openUrl(BuildContext context, Uri uri) async {
+    try {
+      final bool success = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!context.mounted) {
+        return;
+      }
+
+      if (!success) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No app can open this')));
+      }
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('No app can open this')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +76,21 @@ class UserDetailScreen extends StatelessWidget {
             leading: const Icon(Icons.email),
             title: const Text('Email'),
             subtitle: Text(user.email),
+            onTap: () async {
+              final Uri uri = Uri(scheme: 'mailto', path: user.email);
+
+              await _openUrl(context, uri);
+            },
           ),
 
           ListTile(
             leading: const Icon(Icons.phone),
             title: const Text('Phone'),
             subtitle: Text(user.phone),
-            onTap: () {
-              // Practice 12: url_launcher
+            onTap: () async {
+              final Uri uri = Uri(scheme: 'tel', path: user.phoneDigits);
+
+              await _openUrl(context, uri);
             },
           ),
 
@@ -58,9 +98,22 @@ class UserDetailScreen extends StatelessWidget {
             leading: const Icon(Icons.language),
             title: const Text('Website'),
             subtitle: Text(user.website ?? 'Not available'),
-            onTap: () {
-              // Practice 12: url_launcher
-            },
+            onTap: user.website == null
+                ? null
+                : () async {
+                    final String website = user.website!;
+
+                    String url = website;
+
+                    if (!url.startsWith('https://') &&
+                        !url.startsWith('http://')) {
+                      url = 'https://$url';
+                    }
+
+                    final Uri uri = Uri.parse(url);
+
+                    await _openUrl(context, uri);
+                  },
           ),
 
           const Divider(height: 32),
@@ -125,6 +178,38 @@ class UserDetailScreen extends StatelessWidget {
             title: const Text('Business'),
             subtitle: Text(user.companyBs),
           ),
+
+          if (kDebugMode)
+            ListTile(
+              leading: const Icon(Icons.copy),
+              title: const Text('Copy token to clipboard'),
+              onTap: () async {
+                final store = context.read<SecureStore>();
+
+                final token = await store.readToken();
+
+                if (!context.mounted) {
+                  return;
+                }
+
+                if (token == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No token found')),
+                  );
+                  return;
+                }
+
+                await Clipboard.setData(ClipboardData(text: token));
+
+                if (!context.mounted) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Token copied')));
+              },
+            ),
         ],
       ),
     );

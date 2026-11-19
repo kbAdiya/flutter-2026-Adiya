@@ -7,15 +7,29 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'api_exception.dart';
+import '../storage/secure_store.dart';
 
 class ApiClient {
   final http.Client _client;
+  final SecureStore _store;
   final String host;
 
-  ApiClient(this._client, {this.host = 'jsonplaceholder.typicode.com'});
+  ApiClient(
+    this._client,
+    this._store, {
+    this.host = 'jsonplaceholder.typicode.com',
+  });
 
-  Map<String, String> get headers {
-    return {'Accept': 'application/json'};
+  Future<Map<String, String>> get headers async {
+    final String? token = await _store.readToken();
+
+    final Map<String, String> result = {'Accept': 'application/json'};
+
+    if (token != null) {
+      result['Authorization'] = 'Bearer $token';
+    }
+
+    return result;
   }
 
   Uri buildUri(String path, [Map<String, String>? queryParameters]) {
@@ -73,7 +87,11 @@ class ApiClient {
   }) async {
     final uri = buildUri(path, queryParameters);
 
-    final response = await _send(() => _client.get(uri, headers: headers));
+    final requestHeaders = await headers;
+
+    final response = await _send(
+      () => _client.get(uri, headers: requestHeaders),
+    );
 
     _check(response);
 
@@ -89,7 +107,9 @@ class ApiClient {
   Future<dynamic> post(String path, Map<String, dynamic> data) async {
     final uri = buildUri(path);
 
-    final requestHeaders = {...headers, 'Content-Type': 'application/json'};
+    final baseHeaders = await headers;
+
+    final requestHeaders = {...baseHeaders, 'Content-Type': 'application/json'};
 
     final response = await _send(
       () => _client.post(uri, headers: requestHeaders, body: jsonEncode(data)),

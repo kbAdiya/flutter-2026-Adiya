@@ -1,13 +1,33 @@
 import '../../core/api/api_client.dart';
 import '../../core/api/api_exception.dart';
 import 'user.dart';
+import 'users_cache.dart';
 
 class UserRepository {
   final ApiClient _api;
+  final UsersCache _cache;
 
-  UserRepository(this._api);
+  UserRepository(this._api, this._cache);
 
-  Future<List<User>> getAll() async {
+  Future<({List<User> items, bool fromCache})> getAll() async {
+    try {
+      final List<User> freshUsers = await _fetch();
+
+      await _cache.save(freshUsers);
+
+      return (items: freshUsers, fromCache: false);
+    } on NoConnectionException {
+      final List<User>? savedUsers = await _cache.load();
+
+      if (savedUsers == null) {
+        rethrow;
+      }
+
+      return (items: savedUsers, fromCache: true);
+    }
+  }
+
+  Future<List<User>> _fetch() async {
     try {
       final dynamic data = await _api.get('/users');
 
